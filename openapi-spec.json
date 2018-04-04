@@ -1,0 +1,1214 @@
+{
+    "swagger": "2.0",
+    "definitions": {
+        "Envelope": {
+            "type": "object",
+            "properties": {
+                "sessionId": { "type": "string" },
+                "status": { "type": "integer" }
+            }
+        },
+        "SessionCreate": {
+            "type": "object",
+            "properties": {
+                "user": { "type": "string" },
+                "password": { "type": "string" },
+                "desiredCapabilities": { "$ref": "#/definitions/SessionCapabilities"},
+                "requiredCapabilities": { "$ref": "#/definitions/SessionCapabilities"}
+            }
+        },
+        "Session": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "capabilities": { "$ref": "#/definitions/SessionCapabilities"}
+            }
+        },
+        "SessionCapabilities": {
+            "type": "object",
+            "properties": {
+                "browserName": { "type": "string" },
+                "version": { "type": "string" },
+                "platform": { "type": "string" },
+                "javascriptEnabled": { "type": "boolean" },
+                "takesScreenshot": { "type": "boolean" },
+                "handlesAlerts": { "type": "boolean" },
+                "databaseEnabled": { "type": "boolean" },
+                "locationContextEnabled": { "type": "boolean" },
+                "applicationCacheEnabled": { "type": "boolean" },
+                "browserConnectionEnabled": { "type": "boolean" },
+                "cssSelectorsEnabled": { "type": "boolean" },
+                "webStorageEnabled": { "type": "boolean" },
+                "rotatable": { "type": "boolean" },
+                "acceptSslCerts": { "type": "boolean" },
+                "nativeEvents": { "type": "boolean" },
+                "proxy": { "$ref": "#/definitions/Proxy" }
+            },
+            "additionalProperties": {
+                "type": ["string", "object" ]
+            }
+        },
+        "Status": {
+            "type": "object",
+            "properties": {
+                "build": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "os": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "Proxy": {
+            "type": "object",
+            "properties": {
+                "proxyType": { "type": "string" },
+                "proxyAutoconfigUrl": { "type": "string" },
+                "ftpProxy": { "type": "string" },
+                "httpProxy": { "type": "string" },
+                "sslProxy": { "type": "string" },
+                "socksProxy": { "type": "string" },
+                "socksUsername": { "type": "string" },
+                "socksPassword": { "type": "string" },
+                "noProxy": { "type": "string" }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": { "type": "string" },
+                "message": { "type": "string" },
+                "stacktrace": { "type": "string" }
+            }
+        }
+    },
+    "responses": {
+        "ResponseError": {
+            "description": "General Error",
+            "schema": {
+                "$ref": "#/definitions/Error"
+            }
+        }
+    },
+    "paths": {
+        "/session": {
+            "post": {
+                "operationId": "createSession",
+                "parameters": [
+                    {
+                        "name": "session",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SessionCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "$ref": "#/definitions/SessionCapabilities"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            }
+        },
+        "/session/{sessionId}": {
+            "delete": {
+                "operationId": "deleteSession",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/status": {
+            "get": {
+                "operationId": "getStatus",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "$ref": "#/definitions/Status"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/timeouts": {
+            "get": {
+                "operationId": "getTimeouts",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "setTimeouts",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/url": {
+            "get": {
+                "operationId": "getCurrentUrl",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "go",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/back": {
+            "post": {
+                "operationId": "back",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/forward": {
+            "post": {
+                "operationId": "forward",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/refresh": {
+            "post": {
+                "operationId": "refresh",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/title": {
+            "get": {
+                "operationId": "getTitle",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows": {
+            "get": {
+                "operationId": "getWindowHandle",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "switchToWindow",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "closeWindow",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows/handles": {
+            "get": {
+                "operationId": "getWindowHandles",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/frame": {
+            "post": {
+                "operationId": "switchToFrame",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/frame/parent": {
+            "post": {
+                "operationId": "switchToParentFrame",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows/rect": {
+            "get": {
+                "operationId": "getWindowRect",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "setWindowRect",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows/maximize": {
+            "post": {
+                "operationId": "maximizeWindow",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows/minimize": {
+            "post": {
+                "operationId": "minimizeWindow",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/windows/fullscreen": {
+            "post": {
+                "operationId": "fullscreenWindow",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/active": {
+            "get": {
+                "operationId": "getActiveElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element": {
+            "post": {
+                "operationId": "findElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/elements": {
+            "post": {
+                "operationId": "findElements",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/element": {
+            "post": {
+                "operationId": "findElementFromElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/elements": {
+            "post": {
+                "operationId": "findElementsFromElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/selected": {
+            "get": {
+                "operationId": "isElementSelected",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/attribute/{name}": {
+            "get": {
+                "operationId": "getElementAttribute",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "name",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/property/{name}": {
+            "get": {
+                "operationId": "getElementProperty",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "name",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/css/{propertyName}": {
+            "get": {
+                "operationId": "getElementCSSValue",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "propertyName",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/text": {
+            "get": {
+                "operationId": "getElementText",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/name": {
+            "get": {
+                "operationId": "getElementTagName",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/rect": {
+            "get": {
+                "operationId": "getElementRect",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/enabled": {
+            "get": {
+                "operationId": "isElementEnabled",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/click": {
+            "post": {
+                "operationId": "clickOnElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/clear": {
+            "post": {
+                "operationId": "clearElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/value": {
+            "post": {
+                "operationId": "sendKeysToElement",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/source": {
+            "get": {
+                "operationId": "getPageSource",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/execute/sync": {
+            "post": {
+                "operationId": "executeScript",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/execute/async": {
+            "post": {
+                "operationId": "executeAsyncScript",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/cookie": {
+            "get": {
+                "operationId": "getAllCookies",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addCookie",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteAllCookies",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/cookie/{name}": {
+            "get": {
+                "operationId": "getCookie",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteCookie",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "name",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/actions": {
+            "post": {
+                "operationId": "performActions",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "releaseActions",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/alert/dismiss": {
+            "post": {
+                "operationId": "dismissAlert",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/alert/accept": {
+            "post": {
+                "operationId": "acceptAlert",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/alert/text": {
+            "get": {
+                "operationId": "getAlertText",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "sendAlertText",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/screenshot": {
+            "get": {
+                "operationId": "takeScreenshot",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        },
+        "/session/{sessionId}/element/{elementId}/screenshot": {
+            "get": {
+                "operationId": "takeElementScreenshot",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "default": {
+                        "$ref": "#/responses/ResponseError"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "sessionId",
+                    "in": "path",
+                    "type": "string"
+                },
+                {
+                    "name": "elementId",
+                    "in": "path",
+                    "type": "string"
+                }
+            ]
+        }
+    }
+}

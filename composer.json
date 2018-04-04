@@ -1,0 +1,27 @@
+{
+    "name": "jwurtz/async-webdriver",
+    "description": "Async WebDriver API Client",
+    "type": "library",
+    "require": {
+        "php": "^7.1",
+        "jane-php/open-api-runtime": "^4.0",
+        "amphp/artax": "^3.0"
+    },
+    "require-dev": {
+        "jane-php/open-api": "^4.0",
+        "friendsofphp/php-cs-fixer": "^2.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "AsyncWebDriver\\": "src",
+            "AsyncWebDriver\\Api\\": "generated"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joel Wurtz",
+            "email": "joel.wurtz@gmail.com"
+        }
+    ]
+}
